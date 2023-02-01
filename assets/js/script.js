@@ -22,7 +22,13 @@
   // TODO: Add code to display the current date in the header of the page.
 
 
+//Global Variables------------------------------------------------------------------------------------//
 
+var allTimes = ['9am', '10am', '11am', '12pm', '1pm', '2pm', '3pm', '4pm', '5pm', '6pm', '7pm', '8pm', '9pm'];
+var mainDiv = $('#mainDiv');
+var hourOfDay = 9;
+
+//----------------------------------------------------------------------------------------------------//
 //----------------------------------------------------------------------------------------------------//
 //Time based Code, and Shows current date on header---------------------------------------------------//
 
@@ -36,3 +42,58 @@ $('#currentDay').text(currentTime.format('dddd, MMM, D YYYY'));
 console.log(currentTime);
 
 //----------------------------------------------------------------------------------------------------//
+//This creates the textboxes with the corresponding times.--------------------------------------------//
+
+function timeBlocks() {
+  for (var i = 0; i < allTimes.length; i++) {
+
+    //elements for each timeblock that will load up with different hours
+
+    var divEl = $('<div>');
+    var timeDiv = $('<div class="col-2 col-md-1 hour text-center py-3"></div>');
+    var textAreaEl = $('<textarea class="col-8 col-md-10 description" rows="3"></textarea>');
+    var buttonEl = $('<button class="btn saveBtn col-2 col-md-1" aria-label="save">');
+    var iEl = $('<i class="fas fa-save" aria-hidden="true"></i>');
+
+    //connects each element inside a div to create the timeBlock
+    mainDiv.append(divEl);
+    divEl.append(timeDiv);
+    divEl.append(textAreaEl);
+    divEl.append(buttonEl);
+    buttonEl.append(iEl);
+    //Adds a time from the Alltimes Var per block depending what index the for loop is on.
+    timeDiv.text(allTimes[i]);
+
+    //Giving each time block a specific hour to correspond to the time its labeled as
+    divEl.attr('hour-of-day', hourOfDay);
+
+    //creating an ID for every text area to grab its values when saving to local storage
+    textAreaEl.attr('id', 'text-area-' + i)
+
+    //both of these will get the current index of a row when saving to local storage
+    buttonEl.attr('save-button-index', [i])
+    iEl.attr('save-button-index', [i])
+
+
+    //this will change the color of the block depending on the time of day
+    if (hourOfDay < currentHour) {
+      divEl.attr('class', `row time-block past`);
+    }
+
+    if (hourOfDay === currentHour) {
+      divEl.attr('class', `row time-block present`);
+    }
+
+    if (hourOfDay > currentHour) {
+      divEl.attr('class', `row time-block future`);
+    }
+
+
+
+    console.log(hourOfDay)
+    hourOfDay++;
+
+  }
+}
+
+timeBlocks();
