@@ -3,7 +3,7 @@ Calendar application for uci bootcamp
 
 ## Deployed Site
 
-https://nshaw973.github.io/Challenge-5-Workday-Scheduler/
+https://nshaw973.github.io/Challenge-5-Work-Day-Scheduler/
 
 ## The Task
 
