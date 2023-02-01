@@ -1,34 +1,9 @@
-// Wrap all code that interacts with the DOM in a call to jQuery to ensure that
-// the code isn't run until the browser has finished rendering all the elements
-// in the html.
-
-  // TODO: Add a listener for click events on the save button. This code should
-  // use the id in the containing time-block as a key to save the user input in
-  // local storage. HINT: What does `this` reference in the click listener
-  // function? How can DOM traversal be used to get the "hour-x" id of the
-  // time-block containing the button that was clicked? How might the id be
-  // useful when saving the description in local storage?
-  //
-  // TODO: Add code to apply the past, present, or future class to each time
-  // block by comparing the id to the current hour. HINTS: How can the id
-  // attribute of each time-block be used to conditionally add or remove the
-  // past, present, and future classes? How can Day.js be used to get the
-  // current hour in 24-hour time?
-  //
-  // TODO: Add code to get any user input that was saved in localStorage and set
-  // the values of the corresponding textarea elements. HINT: How can the id
-  // attribute of each time-block be used to do this?
-  //
-  // TODO: Add code to display the current date in the header of the page.
-
-
 //Global Variables------------------------------------------------------------------------------------//
 
 var allTimes = ['9am', '10am', '11am', '12pm', '1pm', '2pm', '3pm', '4pm', '5pm', '6pm', '7pm', '8pm', '9pm'];
 var mainDiv = $('#mainDiv');
 var hourOfDay = 9;
 
-//----------------------------------------------------------------------------------------------------//
 //----------------------------------------------------------------------------------------------------//
 //Time based Code, and Shows current date on header---------------------------------------------------//
 
@@ -52,6 +27,8 @@ function timeBlocks() {
     var divEl = $('<div>');
     var timeDiv = $('<div class="col-2 col-md-1 hour text-center py-3"></div>');
     var textAreaEl = $('<textarea class="col-8 col-md-10 description" rows="3"></textarea>');
+    //Filling the TextArea with saved text from teh local storage
+      textAreaEl.text(fullScheduleText[i])
     var buttonEl = $('<button class="btn saveBtn col-2 col-md-1" aria-label="save">');
     var iEl = $('<i class="fas fa-save" aria-hidden="true"></i>');
 
@@ -88,7 +65,23 @@ function timeBlocks() {
       divEl.attr('class', `row time-block future`);
     }
 
+    //Turns the save button into a clickable event
+    buttonEl.on('click', function (event){
+      event.preventDefault();
+      event.stopPropagation();
 
+      //Selects the button via event.target, then turns it into the var target, where we then grab its attribute and its value from the save-button-index
+      var target = $(event.target)
+      var index = target.attr('save-button-index')
+      if(index === undefined){
+        return;
+      }
+      console.log(index)
+      var textArea = $('#text-area-' + index)
+  
+      storeText(index, textArea.val());
+      console.log("text", textArea.val())
+    });
 
     console.log(hourOfDay)
     hourOfDay++;
@@ -96,4 +89,35 @@ function timeBlocks() {
   }
 }
 
+//----------------------------------------------------------------------------------------------------//
+//This Stores everything into a local storage---------------------------------------------------------//
+
+var saveBtn = $('saveBtn');
+
+//new Array is creating an array with an empty list for every single timeblock text area.
+//to prevent a crash when saving when an index doesn't exist
+var fullScheduleText = new Array(allTimes.length).fill("");
+
+function storeText(index, text) {
+
+  console.log(fullScheduleText)
+  fullScheduleText[index] = text
+  console.log(fullScheduleText)
+
+  localStorage.setItem("fullSchedule", JSON.stringify(fullScheduleText))
+}
+
+function init() {
+  var storedSchedule = localStorage.getItem("fullSchedule")
+  if (!storedSchedule){
+    return;
+  }
+
+  fullScheduleText = JSON.parse(storedSchedule)
+}
+
+//----------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------------------------------//
+
+init();
 timeBlocks();
